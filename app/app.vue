@@ -5,8 +5,8 @@ import { ref } from "vue";
 const input = ref("");
 const chat = new Chat({});
 
-const handleSubmit = (e: Event) => {
-  e.preventDefault();
+const handleSubmit = (event: Event) => {
+  event.preventDefault();
   chat.sendMessage({ text: input.value });
   input.value = "";
 };
@@ -16,10 +16,16 @@ const handleSubmit = (e: Event) => {
     <NuxtRouteAnnouncer />
     <h1>The AI SDK</h1>
     <div>
-      <div v-for="(m, index) in chat.messages" :key="m.id ? m.id : index">
-        {{ m.role === "user" ? "User: " : "AI: " }}
-        <div v-for="(part, index) in m.parts" :key="`${m.id}-${part.type}-${index}`">
-          <div v-if="part.type === 'text'">{{ part.text }}</div>
+      <div
+        v-for="(message, messageIndex) in chat.messages"
+        :key="message.id ? message.id : messageIndex"
+      >
+        {{ message.role === "user" ? "User: " : "AI: " }}
+        <div
+          v-for="(messagePart, partIndex) in message.parts"
+          :key="`${message.id}-${messagePart.type}-${partIndex}`"
+        >
+          <div v-if="messagePart.type === 'text'">{{ messagePart.text }}</div>
         </div>
       </div>
 
