@@ -108,47 +108,73 @@ const handleSubmit = async (event: Event) => {
 </script>
 
 <template>
-  <!-- Simple centered layout; keep styles inline to avoid extra CSS files for the demo -->
-  <div style="max-width: 640px; margin: 0 auto; padding: 1.5rem">
-    <h1>Extract Structured Data From PDFs</h1>
-    <p>
-      Upload a PDF invoice and let the Vercel AI SDK extract structured fields
-      like totals, currency, invoice number, and addresses.
-    </p>
+  <div class="min-h-screen max-w-2xl mx-auto p-6">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Extract Structured Data From PDFs</h1>
+      <p class="text-gray-600">
+        Upload a PDF invoice and let the Vercel AI SDK extract structured fields
+        like totals, currency, invoice number, and addresses.
+      </p>
+    </div>
 
-    <!-- Upload + submit form. Uses native form semantics with a custom submit handler. -->
-    <form @submit="handleSubmit" style="margin-top: 1rem">
-      <label>
-        Invoice PDF:
-        <input type="file" accept="application/pdf" @change="handleFileChange" />
+    <!-- Upload + submit form -->
+    <form @submit="handleSubmit" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-4">
+      <label class="block">
+        <span class="block text-sm font-medium text-gray-700 mb-2">Invoice PDF:</span>
+        <input
+          type="file"
+          accept="application/pdf"
+          @change="handleFileChange"
+          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+        />
       </label>
 
-      <div style="margin-top: 0.75rem">
-        <button type="submit" :disabled="isSubmitting">
-          {{ isSubmitting ? "Analyzing invoice..." : "Extract data" }}
-        </button>
-      </div>
+      <button
+        type="submit"
+        :disabled="isSubmitting || !selectedInvoiceFile"
+        class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+      >
+        {{ isSubmitting ? "Analyzing invoice..." : "Extract data" }}
+      </button>
     </form>
 
     <!-- Show any client / server error below the form -->
-    <p v-if="extractionError" style="margin-top: 1rem; color: red">
+    <div
+      v-if="extractionError"
+      class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700"
+    >
       {{ extractionError }}
-    </p>
+    </div>
 
     <!-- Render the extracted structured object when available -->
-    <div v-if="extractionResult" style="margin-top: 1.5rem">
-      <h2>Extraction result</h2>
-      <ul>
-        <li><strong>Total:</strong> {{ extractionResult.total }}</li>
-        <li><strong>Currency:</strong> {{ extractionResult.currency }}</li>
-        <li><strong>Invoice number:</strong> {{ extractionResult.invoiceNumber }}</li>
-        <li><strong>Company name:</strong> {{ extractionResult.companyName }}</li>
-        <li><strong>Company address:</strong> {{ extractionResult.companyAddress }}</li>
-        <li>
-          <strong>Invoicee address:</strong>
-          {{ extractionResult.invoiceeAddress }}
-        </li>
-      </ul>
+    <div v-if="extractionResult" class="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-4">Extraction result</h2>
+      <dl class="space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center">
+          <dt class="font-semibold text-gray-700 sm:w-1/3">Total:</dt>
+          <dd class="text-gray-900 sm:w-2/3">{{ extractionResult.total }}</dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center">
+          <dt class="font-semibold text-gray-700 sm:w-1/3">Currency:</dt>
+          <dd class="text-gray-900 sm:w-2/3">{{ extractionResult.currency }}</dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center">
+          <dt class="font-semibold text-gray-700 sm:w-1/3">Invoice number:</dt>
+          <dd class="text-gray-900 sm:w-2/3">{{ extractionResult.invoiceNumber }}</dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-start">
+          <dt class="font-semibold text-gray-700 sm:w-1/3">Company name:</dt>
+          <dd class="text-gray-900 sm:w-2/3">{{ extractionResult.companyName }}</dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-start">
+          <dt class="font-semibold text-gray-700 sm:w-1/3">Company address:</dt>
+          <dd class="text-gray-900 sm:w-2/3 whitespace-pre-line">{{ extractionResult.companyAddress }}</dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-start">
+          <dt class="font-semibold text-gray-700 sm:w-1/3">Invoicee address:</dt>
+          <dd class="text-gray-900 sm:w-2/3 whitespace-pre-line">{{ extractionResult.invoiceeAddress }}</dd>
+        </div>
+      </dl>
     </div>
   </div>
 </template>

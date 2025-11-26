@@ -12,9 +12,11 @@
   "dependencies": {
     "@ai-sdk/openai": "^3.0.0-beta.66",
     "@ai-sdk/vue": "^3.0.0-beta.116",
+    "@tailwindcss/vite": "^4.1.17",
     "ai": "^6.0.0-beta.116",
-    "pdf-parse": "^1.1.1",
     "nuxt": "^4.2.1",
+    "pdf-parse": "^1.1.1",
+    "tailwindcss": "^4.1.17",
     "vue": "^3.5.25",
     "vue-router": "^4.6.3",
     "zod": "^4.1.13"
