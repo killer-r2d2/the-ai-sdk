@@ -37,6 +37,13 @@ const invoiceSchema = z
  * and returns the structured invoice data as JSON.
  */
 export default defineLazyEventHandler(async () => {
+  const config = useRuntimeConfig();
+  
+  // Set the API key in the environment so @ai-sdk/openai can pick it up
+  if (config.openaiApiKey) {
+    process.env.OPENAI_API_KEY = config.openaiApiKey;
+  }
+  
   return defineEventHandler(async (event: any) => {
     // Parse a multipart/form-data request into fields/files
     const multipartFormData = await readMultipartFormData(event);
