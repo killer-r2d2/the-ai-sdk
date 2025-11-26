@@ -1,4 +1,4 @@
-## The AI SDK – Nuxt Chat Demo
+## The AI SDK – Nuxt Demo (Chat + PDF Extraction)
 
 This repository is a **minimal Nuxt 4 + Vue 3 demo** for a 30‑minute talk that shows how to build an AI‑powered chat app using the **AI SDK**.
 
@@ -27,11 +27,15 @@ In this demo, we use:
 
 ## What this demo app does
 
-- **Simple chat UI** built with Vue and Nuxt (`app.vue`)
-- **Server endpoint** (`server/api/chat.ts`) that:
+- **Simple chat UI** built with Vue and Nuxt (`chat.vue`)
+- **Chat server endpoint** (`server/api/chat.ts`) that:
   - Uses `streamText` with `openai('gpt-5.1')`
   - Streams the model response back to the browser
-- **End‑to‑end flow** from user input → AI SDK → OpenAI → streaming UI
+- **PDF‑to‑structured‑data demo** (`invoice.vue` + `server/api/invoice-extract.post.ts`) that:
+  - Lets you upload a PDF invoice from the browser
+  - Uses `generateObject` with a Zod schema to extract structured fields
+  - Sends the PDF to the model as a `file` content part
+  - Returns a JSON object with total, currency, invoice number, and addresses
 
 This is intentionally small so you can explain it comfortably in ~30 minutes.
 
@@ -88,7 +92,15 @@ export default defineLazyEventHandler(async () => {
 });
 ```
 
-Together, these two pieces show a full request/response loop using the AI SDK.
+Together, these pieces show full request/response loops using the AI SDK for:
+
+- Streaming chat completion
+- Extracting structured data from unstructured PDF content
+
+The PDF example is inspired by the AIHero tutorial
+["Extract Structured Data From PDF's With Vercel's AI SDK"](https://www.aihero.dev/structured-data-from-pdfs-with-vercel-ai-sdk)
+and the accompanying example code
+[`12-analyze-pdfs/main.ts`](https://github.com/ai-hero-dev/ai-hero/blob/main/examples/vercel-ai-sdk/12-analyze-pdfs/main.ts).
 
 ---
 
