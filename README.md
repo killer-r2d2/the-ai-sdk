@@ -20,7 +20,8 @@ It provides:
 In this demo, we use:
 
 - **`ai`** – core AI SDK library (`streamText`, message helpers, etc.)
-- **`@ai-sdk/openai`** – OpenAI model bindings
+- **`@ai-sdk/openai`** – OpenAI model bindings (available via env switch)
+- **`@ai-sdk/anthropic`** – Anthropic model bindings (default chat provider)
 - **`@ai-sdk/vue`** – Vue integration with a `Chat` helper
 
 ---
@@ -29,7 +30,7 @@ In this demo, we use:
 
 - **Simple chat UI** built with Vue and Nuxt (`chat.vue`)
 - **Chat server endpoint** (`server/api/chat.ts`) that:
-  - Uses `streamText` with `openai('gpt-5.1')`
+  - Uses `streamText` with a model selected via `CHAT_PROVIDER` (Anthropic by default, OpenAI when configured)
   - Streams the model response back to the browser
 - **PDF‑to‑structured‑data demo** (`invoice.vue` + `server/api/invoice-extract.post.ts`) that:
   - Lets you upload a PDF invoice from the browser
@@ -69,7 +70,7 @@ const handleSubmit = (event: Event) => {
 - **Backend – `server/api/chat.ts`**
   - Receives `UIMessage[]` from the frontend
   - Converts them to model messages
-  - Calls `streamText` with an OpenAI model
+  - Calls `streamText` with a model selected by `getChatModel()` (Anthropic by default, OpenAI when `CHAT_PROVIDER=openai`)
   - Returns a streaming response for the UI
 
 Example (simplified):
@@ -77,13 +78,26 @@ Example (simplified):
 ```ts
 import { streamText, UIMessage, convertToModelMessages } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
+
+const chatProviderName =
+  process.env.CHAT_PROVIDER && process.env.CHAT_PROVIDER.trim() !== ""
+    ? process.env.CHAT_PROVIDER
+    : "anthropic";
+
+function getChatModel() {
+  if (chatProviderName === "openai") {
+    return openai("gpt-5.1");
+  }
+  return anthropic("claude-3-7-sonnet-latest");
+}
 
 export default defineLazyEventHandler(async () => {
   return defineEventHandler(async (event: any) => {
     const { messages }: { messages: UIMessage[] } = await readBody(event);
 
     const result = streamText({
-      model: openai("gpt-5.1"),
+      model: getChatModel(),
       messages: convertToModelMessages(messages),
     });
 
@@ -109,7 +123,8 @@ and the accompanying example code
 ### Requirements
 
 - Node.js 18+ recommended
-- An OpenAI API key (`OPENAI_API_KEY`)
+- An OpenAI API key (`OPENAI_API_KEY`) if you want to use OpenAI
+- An Anthropic API key (`ANTHROPIC_API_KEY`) if you want to use Anthropic
 
 ### 1. Install dependencies
 
@@ -127,12 +142,21 @@ yarn install
 bun install
 ```
 
-### 2. Configure your OpenAI API key
+### 2. Configure your API keys and provider
 
 Create a `.env` file in the project root (or set this in your shell):
 
 ```bash
-OPENAI_API_KEY=sk-...
+# Anthropic (default chat provider)
+ANTHROPIC_API_KEY=sk-ant-...
+
+# OpenAI (optional, used when CHAT_PROVIDER=openai)
+OPENAI_API_KEY=sk-openai-...
+
+# Optional: choose provider for the chat endpoint
+# - anthropic (default when unset)
+# - openai
+CHAT_PROVIDER=anthropic
 ```
 
 ### 3. Run the development server

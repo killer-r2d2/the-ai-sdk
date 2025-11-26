@@ -112,6 +112,9 @@ const handleSubmit = async (event: Event) => {
   <div style="max-width: 640px; margin: 0 auto; padding: 1.5rem">
     <h1>Extract Structured Data From PDFs</h1>
     <p>
+      Model: OpenAI GPT-5.1
+    </p>
+    <p>
       Upload a PDF invoice and let the Vercel AI SDK extract structured fields
       like totals, currency, invoice number, and addresses.
     </p>

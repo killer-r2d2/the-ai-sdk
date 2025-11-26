@@ -1,5 +1,7 @@
-import { streamText, UIMessage, convertToModelMessages } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { streamText, convertToModelMessages } from "ai";
+import type { UIMessage } from "ai";
+// @ts-ignore - Anthropic module is available at runtime; ambient types are provided separately
+import { anthropic } from "@ai-sdk/anthropic";
 
 // Lazily create the event handler for the /api/chat endpoint
 export default defineLazyEventHandler(async () => {
@@ -8,9 +10,10 @@ export default defineLazyEventHandler(async () => {
     // Read the UI-level chat messages sent from the frontend
     const { messages }: { messages: UIMessage[] } = await readBody(event);
 
-    // Start a streaming text generation using OpenAI gpt-5.1
+    // Start a streaming text generation using Anthropic (v2-compatible) only
     const result = streamText({
-      model: openai('gpt-5.1'),
+      // Use a v2-compatible Anthropic model; IDs ending in 3.5 were removed in v2.
+      model: anthropic("claude-3-7-sonnet-latest"),
       // Convert UI messages into the format expected by the model
       messages: convertToModelMessages(messages),
     });

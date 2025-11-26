@@ -22,6 +22,10 @@ const handleSubmit = (event: Event) => {
 
 <template>
   <div>
+    <h1>Chat</h1>
+    <p>
+      Model: Anthropic Claude 3.7 Sonnet
+    </p>
       <!-- Render each chat message -->
       <div
         v-for="(message, messageIndex) in chat.messages"
